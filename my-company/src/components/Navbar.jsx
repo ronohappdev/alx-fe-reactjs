@@ -32,7 +32,7 @@ function Navbar() {
   };
 
   return (
-    <nav style={navStyles}>
+    <nav style={{ backgroundColor: 'blue', color: 'white', padding: '10px 20px', fontSize: '16px' }}>
       <Link to="/" style={logoStyles}>My Company</Link>
       <ul style={navLinksStyles}>
         <li><Link to="/" style={linkStyles}>Home</Link></li>
