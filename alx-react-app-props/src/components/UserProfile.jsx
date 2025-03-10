@@ -1,10 +1,9 @@
 import { createContext } from 'react';
-const UserProfile = (props) => {
-    return (
-        <div>
-            return <UserInfo />;
-        </div>
-    );
-};
+import UserInfo from './UserInfo';
+
+function ProfilePage({ userData }) {
+    return <UserInfo userData={userData} />;
+  }
+  
 
 export default UserProfile;
