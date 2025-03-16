@@ -1,3 +1,4 @@
+// src/App.jsx
 import "./App.css";
 import RegistrationForm from "./components/RegistrationForm";
 import FormikForm from "./components/FormikForm";
