@@ -13,6 +13,7 @@ import NotFound from './components/NotFound';
 import Navigation from './components/Navigation';
 import ProtectedRoute from './components/ProtectedRoute';
 import AuthContext from './contexts/AuthContext';
+import { BrowserRouter } from 'react-router-dom';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
