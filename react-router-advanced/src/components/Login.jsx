@@ -1,12 +1,12 @@
 // File: src/components/Login.jsx
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import AuthContext from '../contexts/AuthContext';
+import useAuth from '../hooks/useAuth';
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   

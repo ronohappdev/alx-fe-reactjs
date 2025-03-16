@@ -1,10 +1,9 @@
 // File: src/components/ProtectedRoute.jsx
-import { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import AuthContext from '../contexts/AuthContext';
+import useAuth from '../hooks/useAuth';
 
 function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated } = useAuth();
   const location = useLocation();
   
   if (!isAuthenticated) {
