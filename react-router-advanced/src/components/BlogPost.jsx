@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 
 function BlogPost() {
-  const { postId } = useParams();
+  const { id } = useParams();  // Changed from postId to id
   const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -47,15 +47,15 @@ function BlogPost() {
       
       // Simulate network delay
       setTimeout(() => {
-        if (posts[postId]) {
-          setPost(posts[postId]);
+        if (posts[id]) {
+          setPost(posts[id]);
         }
         setLoading(false);
       }, 300);
     };
     
     fetchPost();
-  }, [postId]);
+  }, [id]);  // Changed dependency from postId to id
   
   if (loading) {
     return <div>Loading post...</div>;

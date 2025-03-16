@@ -31,23 +31,19 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             
-            {/* Dynamic routing for blog posts */}
+            {/* Dynamic routing for blog posts using :id parameter */}
             <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:postId" element={<BlogPost />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
             
-            {/* Protected routes with nested routes */}
+            {/* Protected routes */}
             <Route 
-              path="/profile" 
+              path="/profile/*" 
               element={
                 <ProtectedRoute>
                   <Profile />
                 </ProtectedRoute>
               }
-            >
-              {/* Nested routes within Profile */}
-              <Route index element={<ProfileDetails />} />
-              <Route path="settings" element={<ProfileSettings />} />
-            </Route>
+            />
             
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
