@@ -1,86 +1,45 @@
-// src/components/FormikForm.jsx
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+// src/components/FormikForm.js
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
-// First, install Yup: npm install yup
+const validationSchema = Yup.object({
+  username: Yup.string().required("Username is required"),
+  email: Yup.string().email("Invalid email format").required("Email is required"),
+  password: Yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
+});
 
-function FormikForm() {
-  // Initial form values
-  const initialValues = {
-    username: '',
-    email: '',
-    password: ''
-  };
-
-  // Validation schema using Yup
-  const validationSchema = Yup.object({
-    username: Yup.string().required('Username is required'),
-    email: Yup.string().email('Invalid email address').required('Email is required'),
-    password: Yup.string()
-      .min(6, 'Password must be at least 6 characters')
-      .required('Password is required')
-  });
-
-  // Form submission handler
-  const handleSubmit = async (values, { setSubmitting, resetForm, setStatus }) => {
-    try {
-      // Here you would normally make an API call
-      // For now, we'll simulate a successful registration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setStatus({ success: 'Registration successful!' });
-      resetForm();
-    } catch (error) {
-      setStatus({ error: 'Registration failed. Please try again.' });
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
+const FormikForm = () => {
   return (
-    <div className="form-container">
-      <h2>Register with Formik</h2>
-      
-      <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting, status }) => (
-          <Form>
-            {status && status.success && (
-              <div className="success-message">{status.success}</div>
-            )}
-            {status && status.error && (
-              <div className="error-message">{status.error}</div>
-            )}
-            
-            <div className="form-group">
-              <label htmlFor="username">Username</label>
-              <Field type="text" id="username" name="username" />
-              <ErrorMessage name="username" component="div" className="error" />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <Field type="email" id="email" name="email" />
-              <ErrorMessage name="email" component="div" className="error" />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <Field type="password" id="password" name="password" />
-              <ErrorMessage name="password" component="div" className="error" />
-            </div>
-            
-            <button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Submitting...' : 'Register'}
-            </button>
-          </Form>
-        )}
-      </Formik>
-    </div>
+    <Formik
+      initialValues={{ username: "", email: "", password: "" }}
+      validationSchema={validationSchema}
+      onSubmit={(values, { setSubmitting }) => {
+        console.log("Form Submitted", values);
+        setSubmitting(false);
+      }}
+    >
+      {({ isSubmitting }) => (
+        <Form>
+          <div>
+            <label>Username:</label>
+            <Field type="text" name="username" />
+            <ErrorMessage name="username" component="p" />
+          </div>
+          <div>
+            <label>Email:</label>
+            <Field type="email" name="email" />
+            <ErrorMessage name="email" component="p" />
+          </div>
+          <div>
+            <label>Password:</label>
+            <Field type="password" name="password" />
+            <ErrorMessage name="password" component="p" />
+          </div>
+          <button type="submit" disabled={isSubmitting}>Register</button>
+        </Form>
+      )}
+    </Formik>
   );
-}
+};
 
 export default FormikForm;
