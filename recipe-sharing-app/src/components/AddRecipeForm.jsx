@@ -1,42 +1,59 @@
-// src/components/AddRecipeForm.jsx
-import { useState } from 'react'
-import useRecipeStore from './recipeStore'
+import React, { useState } from 'react';
+import { useRecipeStore } from './recipeStore';
 
 const AddRecipeForm = () => {
-  const addRecipe = useRecipeStore(state => state.addRecipe)
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
+  // Get addRecipe action from the Zustand store
+  const addRecipe = useRecipeStore(state => state.addRecipe);
+  
+  // Local state for form fields
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = (event) => {
-    event.preventDefault()
+    event.preventDefault();
+    setError('');
     
-    // Validate form
+    // Validate form input
     if (!title.trim() || !description.trim()) {
-      alert('Please fill in all fields')
-      return
+      setError('Title and description are required');
+      return;
     }
     
-    // Add recipe with unique ID
+    // Add recipe to store with unique ID
     addRecipe({ 
       id: Date.now(), 
       title, 
       description 
-    })
+    });
     
-    // Reset form
-    setTitle('')
-    setDescription('')
-  }
+    // Show success message
+    setSuccess(true);
+    
+    // Clear form fields
+    setTitle('');
+    setDescription('');
+    
+    // Reset success message after 3 seconds
+    setTimeout(() => {
+      setSuccess(false);
+    }, 3000);
+  };
 
   return (
-    <div className="recipe-form-container">
+    <div className="add-recipe-form">
       <h2>Add New Recipe</h2>
+      
+      {error && <div className="error-message">{error}</div>}
+      {success && <div className="success-message">Recipe added successfully!</div>}
+      
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="title">Recipe Title</label>
+          <label htmlFor="title">Recipe Title:</label>
           <input
-            id="title"
             type="text"
+            id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter recipe title"
@@ -44,20 +61,19 @@ const AddRecipeForm = () => {
         </div>
         
         <div className="form-group">
-          <label htmlFor="description">Description</label>
+          <label htmlFor="description">Description:</label>
           <textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Enter recipe description"
-            rows="4"
           />
         </div>
         
-        <button type="submit" className="submit-btn">Add Recipe</button>
+        <button type="submit">Add Recipe</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default AddRecipeForm
+export default AddRecipeForm;

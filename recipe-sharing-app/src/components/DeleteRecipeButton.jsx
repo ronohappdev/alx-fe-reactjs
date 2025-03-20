@@ -1,31 +1,37 @@
-// src/components/DeleteRecipeButton.jsx
-import { useNavigate } from 'react-router-dom'
-import useRecipeStore from './recipeStore'
+import React, { useState } from 'react';
+import { useRecipeStore } from './recipeStore';
 
-const DeleteRecipeButton = ({ id }) => {
-  const navigate = useNavigate()
-  const deleteRecipe = useRecipeStore(state => state.deleteRecipe)
-  
+const DeleteRecipeButton = ({ recipeId }) => {
+  const [showConfirm, setShowConfirm] = useState(false);
+  const deleteRecipe = useRecipeStore(state => state.deleteRecipe);
+
   const handleDelete = () => {
-    // Confirm before deleting
-    const confirmDelete = window.confirm(
-      'Are you sure you want to delete this recipe? This action cannot be undone.'
-    )
-    
-    if (confirmDelete) {
-      deleteRecipe(id)
-      navigate('/')
-    }
+    deleteRecipe(recipeId);
+    setShowConfirm(false);
+  };
+
+  if (showConfirm) {
+    return (
+      <div className="delete-confirm">
+        <button onClick={handleDelete} className="confirm-button">
+          Confirm
+        </button>
+        <button onClick={() => setShowConfirm(false)} className="cancel-button">
+          Cancel
+        </button>
+      </div>
+    );
   }
-  
+
   return (
     <button 
-      className="delete-button" 
-      onClick={handleDelete}
+      onClick={() => setShowConfirm(true)} 
+      className="delete-button"
+      aria-label="Delete recipe"
     >
-      Delete Recipe
+      Delete
     </button>
-  )
-}
+  );
+};
 
-export default DeleteRecipeButton
+export default DeleteRecipeButton;
