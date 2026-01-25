@@ -1,86 +1,76 @@
-// src/App.jsx
-import { useState } from 'react';
-import { RecipeStoreProvider } from './store/recipeStore';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import RecipeList from './components/RecipeList';
-import RecipeDetails from './components/RecipeDetails';
 import AddRecipeForm from './components/AddRecipeForm';
+import RecipeDetails from './components/RecipeDetails';
+import EditRecipeForm from './components/EditRecipeForm';
 import SearchBar from './components/SearchBar';
-import FavoritesList from './components/FavoritesList';
-import RecommendationsList from './components/RecommendationsList';
+import { useRecipeStore } from './recipeStore';
+import './App.css';
 
-const AppContent = () => {
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [activeTab, setActiveTab] = useState('all');
+function App() {
+  const setRecipes = useRecipeStore(state => state.setRecipes);
+  
+  // Initialize with some sample recipes when the app loads
+  useEffect(() => {
+    const sampleRecipes = [
+      { 
+        id: 1, 
+        title: 'Spaghetti Carbonara', 
+        description: 'Classic Italian pasta dish with eggs, cheese, bacon, and black pepper. The hot pasta is tossed with a mixture of eggs, cheese, and pancetta, creating a creamy sauce without using heavy cream.' 
+      },
+      { 
+        id: 2, 
+        title: 'Chicken Stir Fry', 
+        description: 'Quick and healthy stir-fried chicken with vegetables and soy sauce. A versatile dish that can be customized with your favorite vegetables and served over rice or noodles for a complete meal.' 
+      },
+      {
+        id: 3,
+        title: 'Homemade Pizza',
+        description: 'Delicious homemade pizza with a crispy crust and your choice of toppings. This recipe includes instructions for making the perfect pizza dough from scratch and suggestions for classic topping combinations.'
+      }
+    ];
+    
+    setRecipes(sampleRecipes);
+  }, [setRecipes]);
 
   return (
-    <div className="app-container">
-      <div className="app-content">
-        <header className="app-header">
-          <h1 className="app-title">🍳 Recipe Sharing App</h1>
-          <p className="app-subtitle">Discover, share, and save your favorite recipes</p>
+    <Router>
+      <div className="app">
+        <header>
+          <h1>Recipe Sharing App</h1>
         </header>
-
-        <div className="tab-container">
-          <button
-            onClick={() => setActiveTab('all')}
-            className={`tab-button ${activeTab === 'all' ? 'active' : 'inactive'}`}
-          >
-            All Recipes
-          </button>
-          <button
-            onClick={() => setActiveTab('favorites')}
-            className={`tab-button ${activeTab === 'favorites' ? 'active' : 'inactive'}`}
-          >
-            Favorites
-          </button>
-          <button
-            onClick={() => setActiveTab('recommendations')}
-            className={`tab-button ${activeTab === 'recommendations' ? 'active' : 'inactive'}`}
-          >
-            Recommendations
-          </button>
-        </div>
-
-        <div className="search-add-container">
-          <div className="search-wrapper">
-            <SearchBar />
-          </div>
-          <button
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="btn btn-success btn-nowrap"
-          >
-            {showAddForm ? 'Cancel' : '+ Add Recipe'}
-          </button>
-        </div>
-
-        {showAddForm && (
-          <div className="form-container">
-            <h2 className="form-title">Add New Recipe</h2>
-            <AddRecipeForm onClose={() => setShowAddForm(false)} />
-          </div>
-        )}
-
-        <div className="space-y-6">
-          {activeTab === 'all' && <RecipeList onView={setSelectedRecipe} />}
-          {activeTab === 'favorites' && <FavoritesList onView={setSelectedRecipe} />}
-          {activeTab === 'recommendations' && <RecommendationsList onView={setSelectedRecipe} />}
-        </div>
-
-        {selectedRecipe && (
-          <RecipeDetails recipe={selectedRecipe} onClose={() => setSelectedRecipe(null)} />
-        )}
+        
+        <Routes>
+          <Route path="/" element={
+            <main>
+              <div className="search-container">
+                <SearchBar />
+              </div>
+              <div className="container">
+                <AddRecipeForm />
+                <RecipeList />
+              </div>
+            </main>
+          } />
+          
+          <Route path="/recipe/:recipeId" element={
+            <main>
+              <RecipeDetails />
+            </main>
+          } />
+          
+          <Route path="/edit/:recipeId" element={
+            <main>
+              <EditRecipeForm />
+            </main>
+          } />
+          
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
-};
-
-const App = () => {
-  return (
-    <RecipeStoreProvider>
-      <AppContent />
-    </RecipeStoreProvider>
-  );
-};
+}
 
 export default App;
