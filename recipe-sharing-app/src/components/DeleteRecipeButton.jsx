@@ -1,33 +1,19 @@
-import React, { useState } from 'react';
-import { useRecipeStore } from './recipeStore';
+// src/components/DeleteRecipeButton.jsx
+import { useRecipeStore } from "../store/recipeStore";
 
 const DeleteRecipeButton = ({ recipeId }) => {
-  const [showConfirm, setShowConfirm] = useState(false);
-  const deleteRecipe = useRecipeStore(state => state.deleteRecipe);
+  const { deleteRecipe } = useRecipeStore();
 
   const handleDelete = () => {
-    deleteRecipe(recipeId);
-    setShowConfirm(false);
+    if (window.confirm('Are you sure you want to delete this recipe?')) {
+      deleteRecipe(recipeId);
+    }
   };
 
-  if (showConfirm) {
-    return (
-      <div className="delete-confirm">
-        <button onClick={handleDelete} className="confirm-button">
-          Confirm
-        </button>
-        <button onClick={() => setShowConfirm(false)} className="cancel-button">
-          Cancel
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <button 
-      onClick={() => setShowConfirm(true)} 
-      className="delete-button"
-      aria-label="Delete recipe"
+    <button
+      onClick={handleDelete}
+      className="btn btn-danger btn-small"
     >
       Delete
     </button>
