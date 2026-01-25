@@ -8,6 +8,7 @@ import SearchBar from './components/SearchBar';
 import { useRecipeStore } from './recipeStore';
 import './App.css';
 
+
 function App() {
   const setRecipes = useRecipeStore(state => state.setRecipes);
   
