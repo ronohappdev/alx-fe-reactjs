@@ -4,92 +4,71 @@ import '@testing-library/jest-dom';
 import TodoList from '../components/TodoList';
 
 describe('TodoList Component', () => {
-  test('renders the TodoList with initial todos', () => {
+  test('renders the TodoList component correctly', () => {
     render(<TodoList />);
-    
-    // Check if the header is present
     expect(screen.getByText('Todo List')).toBeInTheDocument();
-    
-    // Check if initial todos are rendered
+    expect(screen.getByTestId('todo-input')).toBeInTheDocument();
+    expect(screen.getByTestId('add-button')).toBeInTheDocument();
+  });
+
+  test('renders initial todos', () => {
+    render(<TodoList />);
     expect(screen.getByText('Learn React')).toBeInTheDocument();
     expect(screen.getByText('Build a Todo App')).toBeInTheDocument();
-    expect(screen.getByText('Write tests')).toBeInTheDocument();
+    expect(screen.getByText('Write Tests')).toBeInTheDocument();
   });
 
-  test('adds a new todo when the form is submitted', () => {
+  test('adds a new todo', () => {
     render(<TodoList />);
-    
-    // Find the input and button
-    const input = screen.getByTestId('new-todo-input');
-    const button = screen.getByTestId('add-todo-button');
-    
-    // Type a new todo and submit
-    fireEvent.change(input, { target: { value: 'Test the app' } });
-    fireEvent.click(button);
-    
-    // Check if the new todo is added
-    expect(screen.getByText('Test the app')).toBeInTheDocument();
-    
-    // Check if the input is cleared
-    expect(input.value).toBe('');
+    const input = screen.getByTestId('todo-input');
+    const addButton = screen.getByTestId('add-button');
+
+    fireEvent.change(input, { target: { value: 'New Todo Item' } });
+    fireEvent.click(addButton);
+
+    expect(screen.getByText('New Todo Item')).toBeInTheDocument();
   });
 
-  test('toggles a todo when clicked', () => {
+  test('does not add empty todo', () => {
     render(<TodoList />);
-    
-    // Find the first todo item
-    const todoItem = screen.getByTestId('todo-item-1');
-    
-    // Initially, the todo should not be completed
-    expect(todoItem).not.toHaveStyle('text-decoration: line-through');
-    
-    // Click the todo to toggle it
-    fireEvent.click(todoItem);
-    
-    // After clicking, the todo should be completed
-    expect(todoItem).toHaveStyle('text-decoration: line-through');
-    
-    // Click again to toggle back
-    fireEvent.click(todoItem);
-    
-    // After clicking again, the todo should not be completed
-    expect(todoItem).not.toHaveStyle('text-decoration: line-through');
+    const initialItems = screen.getAllByTestId('todo-item');
+    const addButton = screen.getByTestId('add-button');
+
+    fireEvent.click(addButton);
+
+    expect(screen.getAllByTestId('todo-item')).toHaveLength(initialItems.length);
   });
 
-  test('deletes a todo when the delete button is clicked', () => {
+  test('toggles a todo item completion status', () => {
     render(<TodoList />);
-    
-    // Check if the todo exists initially
+    const todoText = screen.getByText('Learn React');
+
+    expect(todoText).toHaveStyle('text-decoration: none');
+    fireEvent.click(todoText);
+    expect(todoText).toHaveStyle('text-decoration: line-through');
+    fireEvent.click(todoText);
+    expect(todoText).toHaveStyle('text-decoration: none');
+  });
+
+  test('deletes a todo item', () => {
+    render(<TodoList />);
     expect(screen.getByText('Learn React')).toBeInTheDocument();
-    
-    // Find the delete button for the first todo
-    const deleteButton = screen.getByTestId('delete-button-1');
-    
-    // Click the delete button
-    fireEvent.click(deleteButton);
-    
-    // Check if the todo is removed
+
+    const todoItems = screen.getAllByTestId('todo-item');
+    const firstDeleteButton = todoItems[0].querySelector('button');
+    fireEvent.click(firstDeleteButton);
+
     expect(screen.queryByText('Learn React')).not.toBeInTheDocument();
   });
 
-  test('does not add empty todos', () => {
+  test('clears input after adding a todo', () => {
     render(<TodoList />);
-    
-    // Count initial todos
-    const initialTodoCount = screen.getAllByText(/Learn React|Build a Todo App|Write tests/).length;
-    
-    // Find the input and button
-    const input = screen.getByTestId('new-todo-input');
-    const button = screen.getByTestId('add-todo-button');
-    
-    // Try to submit with empty input
-    fireEvent.change(input, { target: { value: '' } });
-    fireEvent.click(button);
-    
-    // Count todos after attempted add
-    const afterTodoCount = screen.getAllByText(/Learn React|Build a Todo App|Write tests/).length;
-    
-    // Check that the count hasn't changed
-    expect(afterTodoCount).toBe(initialTodoCount);
+    const input = screen.getByTestId('todo-input');
+    const addButton = screen.getByTestId('add-button');
+
+    fireEvent.change(input, { target: { value: 'Test Todo' } });
+    fireEvent.click(addButton);
+
+    expect(input.value).toBe('');
   });
 });
