@@ -10,14 +10,16 @@ const fetchPosts = async () => {
 };
 
 const PostsComponent = () => {
-  const { data, isLoading, isError, error, isFetching, refetch } = useQuery({
-    queryKey: ["posts"],
-    queryFn: fetchPosts,
-    staleTime: 1000 * 60 * 5,        // data stays fresh for 5 minutes — no background refetch during this window
-    cacheTime: 1000 * 60 * 10,       // inactive cache is kept for 10 minutes before garbage collection
-    refetchOnWindowFocus: false,      // do not refetch automatically when user re-focuses the browser tab
-    keepPreviousData: true,           // show previous data while new data is being fetched (great for pagination)
-  });
+  const { data, isLoading, isError, error, isFetching, refetch } = useQuery(
+    ["posts"],         // v4 syntax: queryKey as first argument
+    fetchPosts,        // v4 syntax: queryFn as second argument
+    {
+      staleTime: 1000 * 60 * 5,       // data stays fresh for 5 minutes
+      cacheTime: 1000 * 60 * 10,      // inactive cache kept for 10 minutes before garbage collection
+      refetchOnWindowFocus: false,    // don't refetch when user re-focuses the browser tab
+      keepPreviousData: true,         // show old data while new data is loading
+    }
+  );
 
   if (isLoading) return <p>Loading posts...</p>;
   if (isError) return <p>Error: {error.message}</p>;
@@ -25,13 +27,8 @@ const PostsComponent = () => {
   return (
     <div>
       <h2>Posts</h2>
-
-      {/* isFetching is true during background refetches even when cached data is shown */}
       {isFetching && <p style={{ color: "gray" }}>Refreshing in background...</p>}
-
-      {/* Manual refetch trigger — demonstrates data refetch interaction */}
       <button onClick={() => refetch()}>Refetch Posts</button>
-
       <ul>
         {data.slice(0, 10).map((post) => (
           <li key={post.id}>
